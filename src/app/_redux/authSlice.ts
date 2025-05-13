@@ -1,0 +1,42 @@
+import { createSlice } from "@reduxjs/toolkit";
+import toast from "react-hot-toast";
+
+let token = null;
+if (typeof window !== "undefined") {
+  token = localStorage.getItem("token");
+}
+
+let initialState = {
+  token,
+  loading: false as boolean,
+  error: null as null | string,
+};
+
+let authSlice = createSlice({
+  name: "auth",
+  initialState,
+  reducers: {
+    setloading: (state) => {
+      state.loading = true;
+    },
+    setToken: (state, action) => {
+      state.loading = false;
+      state.token = action.payload.token;
+      localStorage.setItem("token", action.payload.token);
+      toast.success(action.payload.message);
+    },
+    removeToken: (state) => {
+      state.token = null;
+      localStorage.removeItem("token");
+    },
+    setError: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+      toast.error("Incorrect email or password");
+    },
+  },
+});
+
+export let authReducer = authSlice.reducer;
+
+export let { removeToken, setError, setloading, setToken } = authSlice.actions;
