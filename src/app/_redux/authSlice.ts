@@ -16,7 +16,7 @@ let authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setloading: (state) => {
+    setLoading: (state) => {
       state.loading = true;
     },
     setToken: (state, action) => {
@@ -39,4 +39,4 @@ let authSlice = createSlice({
 
 export let authReducer = authSlice.reducer;
 
-export let { removeToken, setError, setloading, setToken } = authSlice.actions;
+export let { removeToken, setError, setLoading, setToken } = authSlice.actions;

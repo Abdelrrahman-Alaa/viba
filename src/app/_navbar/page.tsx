@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -21,8 +22,8 @@ import { removeToken } from "../_redux/authSlice";
 
 function Navbar() {
   const token = useSelector((store: State) => store.authReducer.token);
-  let router = useRouter();
-  let dispatch = useDispatch();
+  const router = useRouter();
+  const dispatch = useDispatch();
   function logout() {
     router.push("/login");
     dispatch(removeToken());

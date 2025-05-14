@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardHeader,
@@ -49,24 +49,36 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   ],
 }));
 
-export default function PostComponent({ post }: { post: Post }) {
+export default function PostComponent({
+  post,
+  isSinglePost = false,
+}: {
+  post: Post;
+  isSinglePost?: boolean;
+}) {
   const [liked, setLiked] = useState(false);
   const handleLike = () => {
     setLiked(!liked);
   };
 
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(isSinglePost);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  const [formattedDate, setFormattedDate] = useState("");
+
+  useEffect(() => {
+    setFormattedDate(new Date(post.createdAt).toLocaleString());
+  }, [post.createdAt]);
 
   return (
     <Card sx={{ maxWidth: 600, margin: "auto", mb: 2 }} elevation={3}>
       <CardHeader
         avatar={<Avatar alt="User avatar" src={post.user?.photo} />}
         title={post.user?.name}
-        subheader={new Date(post.createdAt).toLocaleString()}
+        subheader={formattedDate}
       />
 
       <CardContent>
@@ -103,9 +115,7 @@ export default function PostComponent({ post }: { post: Post }) {
             aria-expanded={expanded}
             aria-label="show more"
           >
-            <IconButton aria-label="comment">
-              <ChatBubbleOutlineIcon />
-            </IconButton>
+            <ChatBubbleOutlineIcon />
           </ExpandMore>
 
           <Box>
@@ -120,14 +130,14 @@ export default function PostComponent({ post }: { post: Post }) {
         </IconButton>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        {post.comments.length > 0 ? (
+        {post.comments.length > 0 && isSinglePost == false ? (
           <CardContent sx={{ my: 1, backgroundColor: "#eee" }}>
             {post.comments.slice(0, 3).map((comment, index) => (
               <Box key={index} sx={{ mb: 2 }}>
                 <CardHeader
                   avatar={<Avatar src={comment.commentCreator.photo} />}
                   title={comment.commentCreator.name}
-                  subheader={new Date(comment.createdAt).toLocaleString()}
+                  subheader={formattedDate}
                 />
                 <Typography>{comment.content}</Typography>
               </Box>
@@ -135,7 +145,7 @@ export default function PostComponent({ post }: { post: Post }) {
 
             <Box textAlign="center">
               <Link
-                href={`/single-post`}
+                href={`/single-post/${post.id}`}
                 style={{
                   textDecoration: "none",
                   color: "#1976d2",
@@ -146,6 +156,19 @@ export default function PostComponent({ post }: { post: Post }) {
                 View all comments →
               </Link>
             </Box>
+          </CardContent>
+        ) : post.comments.length > 0 && isSinglePost ? (
+          <CardContent sx={{ my: 1, backgroundColor: "#eee" }}>
+            {post.comments.map((comment, index) => (
+              <Box key={index} sx={{ mb: 2 }}>
+                <CardHeader
+                  avatar={<Avatar src={comment.commentCreator.photo} />}
+                  title={comment.commentCreator.name}
+                  subheader={formattedDate}
+                />
+                <Typography>{comment.content}</Typography>
+              </Box>
+            ))}
           </CardContent>
         ) : (
           ""

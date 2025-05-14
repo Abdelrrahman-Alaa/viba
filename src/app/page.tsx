@@ -10,9 +10,7 @@ import { Box } from "@mui/material";
 import PostComponent from "./components/PostComponent/PostComponent";
 
 export default function Home() {
-  let { isLoading, posts, error } = useSelector(
-    (state: State) => state.postsReducer
-  );
+  let { isLoading, posts } = useSelector((state: State) => state.postsReducer);
   let dispatch = useDispatch<StoreDispatch>();
 
   useEffect(() => {

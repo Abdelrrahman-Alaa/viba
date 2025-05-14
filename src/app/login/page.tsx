@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { State } from "../_redux/store";
-import { setError, setloading, setToken } from "../_redux/authSlice";
+import { setError, setLoading, setToken } from "../_redux/authSlice";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
@@ -14,7 +14,7 @@ export default function Login() {
   let isLoading = useSelector((store: State) => store.authReducer.loading);
 
   async function login(values: { email: string; password: string }) {
-    dispatch(setloading());
+    dispatch(setLoading());
     try {
       let res = await fetch(`https://linked-posts.routemisr.com/users/signin`, {
         method: "POST",

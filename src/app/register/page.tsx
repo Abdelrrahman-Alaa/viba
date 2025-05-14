@@ -16,13 +16,12 @@ import { useFormik } from "formik";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { State } from "../_redux/store";
-import { setError, setloading, setToken } from "../_redux/authSlice";
+import { setError, setLoading, setToken } from "../_redux/authSlice";
 import { DatePicker } from "@mui/x-date-pickers";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 
 export default function Register() {
-
   let dispatch = useDispatch();
   const router = useRouter();
   let isLoading = useSelector((store: State) => store.authReducer.loading);
@@ -48,7 +47,7 @@ export default function Register() {
   });
 
   async function register(values: any) {
-    dispatch(setloading());
+    dispatch(setLoading());
     try {
       let res = await fetch(`https://linked-posts.routemisr.com/users/signup`, {
         method: "POST",
