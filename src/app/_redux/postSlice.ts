@@ -40,6 +40,25 @@ export const getPost = createAsyncThunk("posts/getPost", async (id: string) => {
   return data;
 });
 
+export const getUserPosts = createAsyncThunk(
+  "posts/getUserPosts",
+  async (userId: string) => {
+    const response = await fetch(
+      `https://linked-posts.routemisr.com/users/${userId}/posts`,
+      {
+        method: "GET",
+        headers: {
+          token: `${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+
+    return data;
+  }
+);
+
 export const createPost = createAsyncThunk(
   "posts/createPost",
   async (formData: FormData, thunkAPI) => {
@@ -80,6 +99,19 @@ const postSlice = createSlice({
       state.posts = action.payload.posts;
     });
     builder.addCase(getPosts.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    });
+
+    // Get user posts
+    builder.addCase(getUserPosts.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getUserPosts.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.posts = action.payload.posts;
+    });
+    builder.addCase(getUserPosts.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     });

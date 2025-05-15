@@ -31,8 +31,8 @@ export default function Login() {
 
       if (res.ok) {
         dispatch(setToken(data));
-        resetForm();
         router.push("/");
+        resetForm();
       } else {
         dispatch(setError(data.error));
       }

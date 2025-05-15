@@ -104,11 +104,6 @@ function Navbar() {
               >
                 <MenuItem onClick={handleCloseNavMenu}>
                   <Typography sx={{ textAlign: "center" }}>
-                    <Link href={"/profile"}>Profile</Link>
-                  </Typography>
-                </MenuItem>
-                <MenuItem onClick={handleCloseNavMenu}>
-                  <Typography sx={{ textAlign: "center" }}>
                     <Link href={"/create-post"}>Add Post</Link>
                   </Typography>
                 </MenuItem>
@@ -137,20 +132,12 @@ function Navbar() {
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {token && (
-              <>
-                <Button
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: "white", display: "block" }}
-                >
-                  <Link href={"/profile"}>Profile</Link>
-                </Button>
-                <Button
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: "white", display: "block" }}
-                >
-                  <Link href={"/create-post"}>Add Post</Link>
-                </Button>
-              </>
+              <Button
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: "white", display: "block" }}
+              >
+                <Link href={"/create-post"}>Add Post</Link>
+              </Button>
             )}
           </Box>
 
@@ -178,30 +165,35 @@ function Navbar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {token ? (
-                <MenuItem onClick={handleCloseUserMenu}>
-                  <Typography
-                    sx={{ textAlign: "center", cursor: "pointer" }}
-                    onClick={logout}
-                  >
-                    Logout
-                  </Typography>
-                </MenuItem>
-              ) : (
-                [
-                  <MenuItem key="login" onClick={handleCloseUserMenu}>
-                    <Typography sx={{ textAlign: "center" }}>
-                      <Link href={"/login"}>Login</Link>
-                    </Typography>
-                  </MenuItem>,
+              {token
+                ? [
+                    <MenuItem key="Profile" onClick={handleCloseUserMenu}>
+                      <Typography sx={{ textAlign: "center" }}>
+                        <Link href={"/profile"}>Profile</Link>
+                      </Typography>
+                    </MenuItem>,
+                    <MenuItem key="logout" onClick={handleCloseUserMenu}>
+                      <Typography
+                        sx={{ textAlign: "center", cursor: "pointer" }}
+                        onClick={logout}
+                      >
+                        Logout
+                      </Typography>
+                    </MenuItem>,
+                  ]
+                : [
+                    <MenuItem key="login" onClick={handleCloseUserMenu}>
+                      <Typography sx={{ textAlign: "center" }}>
+                        <Link href={"/login"}>Login</Link>
+                      </Typography>
+                    </MenuItem>,
 
-                  <MenuItem key="register" onClick={handleCloseUserMenu}>
-                    <Typography sx={{ textAlign: "center" }}>
-                      <Link href={"/register"}>Register</Link>
-                    </Typography>
-                  </MenuItem>,
-                ]
-              )}
+                    <MenuItem key="register" onClick={handleCloseUserMenu}>
+                      <Typography sx={{ textAlign: "center" }}>
+                        <Link href={"/register"}>Register</Link>
+                      </Typography>
+                    </MenuItem>,
+                  ]}
             </Menu>
           </Box>
         </Toolbar>

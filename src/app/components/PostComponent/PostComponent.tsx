@@ -88,12 +88,7 @@ export default function PostComponent({
       </CardContent>
 
       {post.image && (
-        <CardMedia
-          component="img"
-          height="300"
-          image={post.image}
-          alt="Post image"
-        />
+        <CardMedia component="img" image={post.image} alt="Post image" />
       )}
 
       <CardActions
