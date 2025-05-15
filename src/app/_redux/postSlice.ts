@@ -24,7 +24,7 @@ export const getPosts = createAsyncThunk("posts/getPosts", async () => {
   return data;
 });
 
-export const getPost = createAsyncThunk("posts/getPost", async (id: String) => {
+export const getPost = createAsyncThunk("posts/getPost", async (id: string) => {
   const response = await fetch(
     `https://linked-posts.routemisr.com/posts/${id}`,
     {
