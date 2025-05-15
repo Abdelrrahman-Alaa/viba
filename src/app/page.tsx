@@ -23,7 +23,7 @@ export default function Home() {
         <Loading />
       ) : (
         <Box sx={{ margin: "1rem" }}>
-          {posts.map((post) => (
+          {posts?.map((post) => (
             <PostComponent key={post._id} post={post} />
           ))}
         </Box>
