@@ -30,9 +30,9 @@ export default function Login() {
       const data = await res.json();
 
       if (res.ok) {
-        router.push("/");
         dispatch(setToken(data));
         resetForm();
+        router.push("/");
       } else {
         dispatch(setError(data.error));
       }
