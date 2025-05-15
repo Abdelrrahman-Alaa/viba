@@ -6,13 +6,13 @@ if (typeof window !== "undefined") {
   token = localStorage.getItem("token");
 }
 
-let initialState = {
+const initialState = {
   token,
   loading: false as boolean,
   error: null as null | string,
 };
 
-let authSlice = createSlice({
+const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
@@ -37,6 +37,7 @@ let authSlice = createSlice({
   },
 });
 
-export let authReducer = authSlice.reducer;
+export const authReducer = authSlice.reducer;
 
-export let { removeToken, setError, setLoading, setToken } = authSlice.actions;
+export const { removeToken, setError, setLoading, setToken } =
+  authSlice.actions;

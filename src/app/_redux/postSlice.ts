@@ -1,15 +1,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Post } from "../interfaces";
 
-let initialState = {
+const initialState = {
   isLoading: false as boolean,
   posts: [] as Post[],
   post: null as null,
   error: null as any,
 };
 
-export let getPosts = createAsyncThunk("posts/getPosts", async () => {
-  let response = await fetch(
+export const getPosts = createAsyncThunk("posts/getPosts", async () => {
+  const response = await fetch(
     "https://linked-posts.routemisr.com/posts?limit=80",
     {
       method: "GET",
@@ -19,20 +19,23 @@ export let getPosts = createAsyncThunk("posts/getPosts", async () => {
       },
     }
   );
-  let data = await response.json();
+  const data = await response.json();
 
   return data;
 });
 
-export let getPost = createAsyncThunk("posts/getPost", async (id: String) => {
-  let response = await fetch(`https://linked-posts.routemisr.com/posts/${id}`, {
-    method: "GET",
-    headers: {
-      token: `${localStorage.getItem("token")}`,
-      "Content-Type": "application/json",
-    },
-  });
-  let data = await response.json();
+export const getPost = createAsyncThunk("posts/getPost", async (id: String) => {
+  const response = await fetch(
+    `https://linked-posts.routemisr.com/posts/${id}`,
+    {
+      method: "GET",
+      headers: {
+        token: `${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  const data = await response.json();
 
   return data;
 });
@@ -63,7 +66,7 @@ export const createPost = createAsyncThunk(
   }
 );
 
-let postSlice = createSlice({
+const postSlice = createSlice({
   name: "posts",
   initialState,
   reducers: {},
@@ -109,4 +112,4 @@ let postSlice = createSlice({
   },
 });
 
-export let postsReducer = postSlice.reducer;
+export const postsReducer = postSlice.reducer;

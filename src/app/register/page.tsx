@@ -22,11 +22,11 @@ import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 
 export default function Register() {
-  let dispatch = useDispatch();
+  const dispatch = useDispatch();
   const router = useRouter();
-  let isLoading = useSelector((store: State) => store.authReducer.loading);
+  const isLoading = useSelector((store: State) => store.authReducer.loading);
 
-  let validationSchema = Yup.object({
+  const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     email: Yup.string()
       .email("Invalid email address")
@@ -49,15 +49,18 @@ export default function Register() {
   async function register(values: any) {
     dispatch(setLoading());
     try {
-      let res = await fetch(`https://linked-posts.routemisr.com/users/signup`, {
-        method: "POST",
-        body: JSON.stringify(values),
-        headers: {
-          "Content-type": "application/json",
-        },
-      });
+      const res = await fetch(
+        `https://linked-posts.routemisr.com/users/signup`,
+        {
+          method: "POST",
+          body: JSON.stringify(values),
+          headers: {
+            "Content-type": "application/json",
+          },
+        }
+      );
 
-      let data = await res.json();
+      const data = await res.json();
 
       if (res.ok) {
         dispatch(setToken(data));
@@ -72,7 +75,7 @@ export default function Register() {
     }
   }
 
-  let {
+  const {
     handleSubmit,
     handleChange,
     handleBlur,

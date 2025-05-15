@@ -9,22 +9,25 @@ import { setError, setLoading, setToken } from "../_redux/authSlice";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
-  let router = useRouter();
-  let dispatch = useDispatch();
-  let isLoading = useSelector((store: State) => store.authReducer.loading);
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const isLoading = useSelector((store: State) => store.authReducer.loading);
 
   async function login(values: { email: string; password: string }) {
     dispatch(setLoading());
     try {
-      let res = await fetch(`https://linked-posts.routemisr.com/users/signin`, {
-        method: "POST",
-        body: JSON.stringify(values),
-        headers: {
-          "Content-type": "application/json",
-        },
-      });
+      const res = await fetch(
+        `https://linked-posts.routemisr.com/users/signin`,
+        {
+          method: "POST",
+          body: JSON.stringify(values),
+          headers: {
+            "Content-type": "application/json",
+          },
+        }
+      );
 
-      let data = await res.json();
+      const data = await res.json();
 
       if (res.ok) {
         router.push("/");
@@ -39,7 +42,7 @@ export default function Login() {
     }
   }
 
-  let { handleSubmit, handleChange, resetForm, values } = useFormik({
+  const { handleSubmit, handleChange, resetForm, values } = useFormik({
     initialValues: {
       email: "",
       password: "",
