@@ -15,15 +15,15 @@ export default function Profile() {
     user: string;
     iat: number;
   }
-  
+
   const { token } = useSelector((state: State) => state.authReducer);
   const { isLoading, posts } = useSelector(
     (state: State) => state.postsReducer
   );
   const dispatch = useDispatch<StoreDispatch>();
-  const { user } = jwtDecode<MyJwtPayload>(`${token}`);
 
   useEffect(() => {
+    const { user } = jwtDecode<MyJwtPayload>(`${token}`);
     dispatch(getUserPosts(user));
   }, []);
 
