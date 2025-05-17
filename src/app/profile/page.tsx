@@ -11,13 +11,17 @@ import { Box } from "@mui/material";
 import PostComponent from "../components/PostComponent/PostComponent";
 
 export default function Profile() {
+  interface MyJwtPayload {
+    user: string;
+    iat: number;
+  }
+  
   const { token } = useSelector((state: State) => state.authReducer);
   const { isLoading, posts } = useSelector(
     (state: State) => state.postsReducer
   );
   const dispatch = useDispatch<StoreDispatch>();
-
-  const { user } = jwtDecode<JwtPayload>(`${token}`);
+  const { user } = jwtDecode<MyJwtPayload>(`${token}`);
 
   useEffect(() => {
     dispatch(getUserPosts(user));

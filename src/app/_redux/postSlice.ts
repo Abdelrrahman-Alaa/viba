@@ -59,6 +59,25 @@ export const getUserPosts = createAsyncThunk(
   }
 );
 
+export const deletePost = createAsyncThunk(
+  "posts/deletePost",
+  async (userId: string) => {
+    const response = await fetch(
+      `https://linked-posts.routemisr.com/posts/${userId}`,
+      {
+        method: "DELETE",
+        headers: {
+          token: `${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+
+    return data;
+  }
+);
+
 export const createPost = createAsyncThunk(
   "posts/createPost",
   async (formData: FormData, thunkAPI) => {
@@ -112,6 +131,19 @@ const postSlice = createSlice({
       state.posts = action.payload.posts;
     });
     builder.addCase(getUserPosts.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    });
+
+    // Delete user post
+    builder.addCase(deletePost.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(deletePost.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.posts = state.posts.filter((post) => post.id !== action.meta.arg);
+    });
+    builder.addCase(deletePost.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     });
