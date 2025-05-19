@@ -33,6 +33,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
+import { createComment } from "@/app/_redux/commentSlice";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -53,6 +54,7 @@ export default function PostComponent({
   const { token } = useSelector((state: State) => state.authReducer);
   const { user } = jwtDecode<MyJwtPayload>(`${token}`);
 
+  const [commentContent, setCommentContent] = useState("");
   const [openConfirm, setOpenConfirm] = useState(false);
   const [postIdToDelete, setPostIdToDelete] = useState<string | null>(null);
 
@@ -61,28 +63,38 @@ export default function PostComponent({
   const ExpandMore = styled((props: ExpandMoreProps) => {
     const { expand, ...other } = props;
     return <IconButton {...other} />;
-  })(({ theme }) => ({
+  })<ExpandMoreProps>(({ theme, expand }) => ({
+    transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
     marginLeft: "auto",
     transition: theme.transitions.create("transform", {
       duration: theme.transitions.duration.shortest,
     }),
-    variants: [
-      {
-        props: ({ expand }) => !expand,
-        style: {
-          transform: "rotate(0deg)",
-        },
-      },
-      {
-        props: ({ expand }) => !!expand,
-        style: {
-          transform: "rotate(180deg)",
-        },
-      },
-    ],
   }));
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const handleAddComment = async () => {
+    if (!commentContent.trim()) return;
+
+    const result = await dispatch(
+      createComment({
+        content: commentContent,
+        post: post._id,
+      })
+    );
+
+    if (createComment.fulfilled.match(result)) {
+      const newComment = result.payload.comment;
+      if (newComment) {
+        post.comments.push(newComment);
+      }
+    }
+
+    console.log(token);
+
+    setCommentContent("");
+  };
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -256,7 +268,7 @@ export default function PostComponent({
             {post.comments.map((comment, index) => (
               <Box key={index} sx={{ mb: 2 }}>
                 <CardHeader
-                  avatar={<Avatar src={comment.commentCreator.photo} />}
+                  avatar={<Avatar src={comment.commentCreator?.photo} />}
                   title={comment.commentCreator.name}
                   subheader={formattedDate}
                 />
@@ -268,6 +280,29 @@ export default function PostComponent({
           ""
         )}
       </Collapse>
+      <CardContent sx={{ backgroundColor: "#f9f9f9", pt: 0 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Avatar src={post.user?.photo} sx={{ width: 32, height: 32 }} />
+          <Box sx={{ flexGrow: 1 }}>
+            <input
+              type="text"
+              placeholder="Add a comment..."
+              value={commentContent}
+              onChange={(e) => setCommentContent(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "8px 12px",
+                borderRadius: "20px",
+                border: "1px solid #ccc",
+                outline: "none",
+              }}
+            />
+          </Box>
+          <Button onClick={handleAddComment} disabled={!commentContent.trim()}>
+            Send
+          </Button>
+        </Box>
+      </CardContent>
     </Card>
   );
 }
