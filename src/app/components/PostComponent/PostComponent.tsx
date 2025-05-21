@@ -33,7 +33,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
-import { createComment } from "@/app/_redux/commentSlice";
+import { createComment, deleteComment } from "@/app/_redux/commentSlice";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -53,12 +53,22 @@ export default function PostComponent({
 }) {
   const { token } = useSelector((state: State) => state.authReducer);
   const { user } = jwtDecode<MyJwtPayload>(`${token}`);
-
-  const [commentContent, setCommentContent] = useState("");
-  const [openConfirm, setOpenConfirm] = useState(false);
-  const [postIdToDelete, setPostIdToDelete] = useState<string | null>(null);
-
   const dispatch = useDispatch<StoreDispatch>();
+
+  // States
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const [postFormattedDate, setPostFormattedDate] = useState("");
+  const [openPostConfirm, setOpenPostConfirm] = useState(false);
+  const [postIdToDelete, setPostIdToDelete] = useState<string | null>(null);
+  const [liked, setLiked] = useState(false);
+  const [expanded, setExpanded] = useState(isSinglePost);
+  const [commentContent, setCommentContent] = useState("");
+  const [commentIdToDelete, setCommentIdToDelete] = useState<string | null>(
+    null
+  );
+
+  const [openCommentConfirm, setOpenCommentConfirm] = useState(false);
 
   const ExpandMore = styled((props: ExpandMoreProps) => {
     const { expand, ...other } = props;
@@ -71,8 +81,40 @@ export default function PostComponent({
     }),
   }));
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  // Functions
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleDeleteClick = (postId: string) => {
+    setPostIdToDelete(postId);
+    setOpenPostConfirm(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (postIdToDelete) {
+      dispatch(deletePost(postIdToDelete));
+    }
+    setOpenPostConfirm(false);
+    setPostIdToDelete(null);
+  };
+
+  const handleCancelDelete = () => {
+    setOpenPostConfirm(false);
+    setPostIdToDelete(null);
+  };
+
+  const handleLike = () => {
+    setLiked(!liked);
+  };
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
 
   const handleAddComment = async () => {
     if (!commentContent.trim()) return;
@@ -96,46 +138,27 @@ export default function PostComponent({
     setCommentContent("");
   };
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleMenuClose = () => {
-    setAnchorEl(null);
+  const handleDeleteCommentClick = (commentId: string) => {
+    setCommentIdToDelete(commentId);
+    setOpenCommentConfirm(true);
   };
 
-  const handleDeleteClick = (postId: string) => {
-    setPostIdToDelete(postId);
-    setOpenConfirm(true);
-  };
-
-  const handleConfirmDelete = () => {
-    if (postIdToDelete) {
-      dispatch(deletePost(postIdToDelete));
+  const handleConfirmCommentDelete = () => {
+    if (commentIdToDelete) {
+      dispatch(deleteComment(commentIdToDelete));
+      // post.comments = post.comments.filter((c) => c._id !== commentIdToDelete);
     }
-    setOpenConfirm(false);
-    setPostIdToDelete(null);
+    setOpenCommentConfirm(false);
+    setCommentIdToDelete(null);
   };
 
-  const handleCancelDelete = () => {
-    setOpenConfirm(false);
-    setPostIdToDelete(null);
+  const handleCancelCommentDelete = () => {
+    setOpenCommentConfirm(false);
+    setCommentIdToDelete(null);
   };
-
-  const [liked, setLiked] = useState(false);
-  const handleLike = () => {
-    setLiked(!liked);
-  };
-
-  const [expanded, setExpanded] = useState(isSinglePost);
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
-
-  const [formattedDate, setFormattedDate] = useState("");
 
   useEffect(() => {
-    setFormattedDate(new Date(post.createdAt).toLocaleString());
+    setPostFormattedDate(new Date(post.createdAt).toLocaleString());
   }, [post.createdAt]);
 
   return (
@@ -143,7 +166,7 @@ export default function PostComponent({
       <CardHeader
         avatar={<Avatar alt="User avatar" src={post.user?.photo} />}
         title={post.user?.name}
-        subheader={formattedDate}
+        subheader={postFormattedDate}
         action={
           <IconButton aria-label="settings" onClick={handleMenuClick}>
             <MoreVertIcon />
@@ -174,8 +197,9 @@ export default function PostComponent({
           </MenuItem>
         </Menu>
       )}
+
       <Dialog
-        open={openConfirm}
+        open={openPostConfirm}
         onClose={handleCancelDelete}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
@@ -189,6 +213,25 @@ export default function PostComponent({
         <DialogActions>
           <Button onClick={handleCancelDelete}>Cancel</Button>
           <Button onClick={handleConfirmDelete} autoFocus color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openCommentConfirm}
+        onClose={handleCancelCommentDelete}
+        aria-labelledby="comment-dialog-title"
+        aria-describedby="comment-dialog-description"
+      >
+        <DialogTitle id="comment-dialog-title">{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="comment-dialog-description">
+            Are you sure you want to delete this comment?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelCommentDelete}>Cancel</Button>
+          <Button onClick={handleConfirmCommentDelete} autoFocus color="error">
             Delete
           </Button>
         </DialogActions>
@@ -241,10 +284,47 @@ export default function PostComponent({
             {post.comments.slice(0, 3).map((comment, index) => (
               <Box key={index} sx={{ mb: 2 }}>
                 <CardHeader
-                  avatar={<Avatar src={comment.commentCreator.photo} />}
+                  avatar={
+                    <Avatar
+                      alt="User avatar"
+                      src={comment.commentCreator?.photo}
+                    />
+                  }
                   title={comment.commentCreator.name}
-                  subheader={formattedDate}
+                  subheader={new Date(comment.createdAt).toLocaleString()}
+                  action={
+                    <IconButton aria-label="settings" onClick={handleMenuClick}>
+                      <MoreVertIcon />
+                    </IconButton>
+                  }
                 />
+                {comment.commentCreator._id === user && (
+                  <>
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={open}
+                      onClose={handleMenuClose}
+                      anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                    >
+                      <MenuItem
+                        onClick={() => {
+                          handleDeleteCommentClick(comment._id);
+                          handleMenuClose();
+                        }}
+                      >
+                        Delete
+                      </MenuItem>
+                    </Menu>
+                  </>
+                )}
+
                 <Typography>{comment.content}</Typography>
               </Box>
             ))}
@@ -268,10 +348,59 @@ export default function PostComponent({
             {post.comments.map((comment, index) => (
               <Box key={index} sx={{ mb: 2 }}>
                 <CardHeader
-                  avatar={<Avatar src={comment.commentCreator?.photo} />}
+                  avatar={
+                    <Avatar
+                      alt="User avatar"
+                      src={comment.commentCreator?.photo}
+                    />
+                  }
                   title={comment.commentCreator.name}
-                  subheader={formattedDate}
+                  subheader={new Date(comment.createdAt).toLocaleString()}
+                  action={
+                    comment.commentCreator._id === user && (
+                      <>
+                        <IconButton
+                          onClick={(event) => {
+                            setAnchorEl(event.currentTarget);
+                            setCommentIdToDelete(comment._id);
+                          }}
+                        >
+                          <MoreVertIcon />
+                        </IconButton>
+
+                        <Menu
+                          anchorEl={anchorEl}
+                          open={
+                            Boolean(anchorEl) &&
+                            commentIdToDelete === comment._id
+                          }
+                          onClose={() => {
+                            setAnchorEl(null);
+                            setCommentIdToDelete(null);
+                          }}
+                          anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "right",
+                          }}
+                          transformOrigin={{
+                            vertical: "top",
+                            horizontal: "right",
+                          }}
+                        >
+                          <MenuItem
+                            onClick={() => {
+                              setOpenCommentConfirm(true);
+                              setAnchorEl(null);
+                            }}
+                          >
+                            Delete
+                          </MenuItem>
+                        </Menu>
+                      </>
+                    )
+                  }
                 />
+
                 <Typography>{comment.content}</Typography>
               </Box>
             ))}

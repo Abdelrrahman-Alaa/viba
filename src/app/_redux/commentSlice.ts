@@ -39,6 +39,25 @@ export const createComment = createAsyncThunk(
   }
 );
 
+export const deleteComment = createAsyncThunk(
+  "comments/deleteComment",
+  async (commentId: string) => {
+    const response = await fetch(
+      `https://linked-posts.routemisr.com/comments/${commentId}`,
+      {
+        method: "DELETE",
+        headers: {
+          token: `${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+
+    return data;
+  }
+);
+
 const commentSlice = createSlice({
   name: "comments",
   initialState,
@@ -59,6 +78,21 @@ const commentSlice = createSlice({
     builder.addCase(createComment.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload as string;
+    });
+
+    // Delete user post
+    builder.addCase(deleteComment.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(deleteComment.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.comments = state.comments.filter(
+        (comment) => comment._id !== action.meta.arg
+      );
+    });
+    builder.addCase(deleteComment.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
     });
   },
 });

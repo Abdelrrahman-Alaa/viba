@@ -61,9 +61,9 @@ export const getUserPosts = createAsyncThunk(
 
 export const deletePost = createAsyncThunk(
   "posts/deletePost",
-  async (userId: string) => {
+  async (postId: string) => {
     const response = await fetch(
-      `https://linked-posts.routemisr.com/posts/${userId}`,
+      `https://linked-posts.routemisr.com/posts/${postId}`,
       {
         method: "DELETE",
         headers: {
