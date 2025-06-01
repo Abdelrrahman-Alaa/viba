@@ -11,6 +11,9 @@ import {
   Box,
 } from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import Fade from "@mui/material/Fade";
+import Skeleton from "@mui/material/Skeleton";
 import { useDispatch, useSelector } from "react-redux";
 import { State, StoreDispatch } from "../_redux/store";
 import { createPost } from "../_redux/postSlice";
@@ -21,12 +24,31 @@ export default function CreatePost() {
   const [text, setText] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [dragActive, setDragActive] = useState(false);
   const dispatch = useDispatch<StoreDispatch>();
   const isLoading = useSelector((state: State) => state.postsReducer.isLoading);
   const router = useRouter();
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDragActive(true);
+  };
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDragActive(false);
+  };
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDragActive(false);
+    const file = e.dataTransfer.files?.[0];
     if (file) {
       setImage(file);
       setPreview(URL.createObjectURL(file));
@@ -52,88 +74,103 @@ export default function CreatePost() {
   };
 
   return (
-    <Box
-      sx={{
-        display: { xs: "flex", md: "block" },
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-      }}
-      px={{ xs: 2, sm: 0 }}
-    >
-      <Paper
-        elevation={3}
-        sx={{
-          width: "100%",
-          maxWidth: { xs: "100%", sm: 500, md: 600 },
-          mx: "auto",
-          mt: { xs: 3, sm: 5 },
-          p: { xs: 2, sm: 3, md: 4 },
-          borderRadius: 3,
-          backgroundColor: "#f9f9f9",
-          mb: 5,
-        }}
-      >
-        <Typography variant="h5" fontWeight={600} mb={3}>
-          Create a Post
-        </Typography>
-
-        <TextField
-          label="What's on your mind?"
-          placeholder="Write something interesting..."
-          multiline
-          rows={4}
-          fullWidth
-          value={text}
-          onChange={(e) => setText(e.target.value)}
+    <Fade in={true} timeout={600}>
+      <div>
+        <Box
           sx={{
-            mb: 3,
-            backgroundColor: "white",
-            borderRadius: 1,
+            display: { xs: "flex", md: "block" },
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "100vh",
           }}
-        />
-
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <Button
-            variant="outlined"
-            startIcon={<ImageIcon />}
-            component="label"
+          px={{ xs: 2, sm: 0 }}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          style={{
+            border: dragActive ? "2px dashed #1976d2" : undefined,
+            background: dragActive ? "#e3f2fd" : undefined,
+          }}
+        >
+          <Paper
+            elevation={3}
+            sx={{
+              width: "100%",
+              maxWidth: { xs: "100%", sm: 500, md: 600 },
+              mx: "auto",
+              mt: { xs: 3, sm: 5 },
+              p: { xs: 2, sm: 3, md: 4 },
+              borderRadius: 3,
+              backgroundColor: "#f9f9f9",
+              mb: 5,
+            }}
           >
-            Upload Image
-            <input
-              type="file"
-              hidden
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-          </Button>
-
-          {preview && (
-            <Avatar
-              variant="rounded"
-              src={preview}
+            <Typography variant="h5" fontWeight={600} mb={3}>
+              Create a Post
+            </Typography>
+            <TextField
+              label="What's on your mind?"
+              placeholder="Write something interesting..."
+              multiline
+              rows={4}
+              fullWidth
+              value={text}
+              onChange={(e) => setText(e.target.value)}
               sx={{
-                width: 100,
-                height: 100,
+                mb: 3,
+                backgroundColor: "white",
                 borderRadius: 1,
-                border: "2px solid #ccc",
               }}
             />
-          )}
-        </Stack>
-
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          size="large"
-          sx={{ mt: 4, textTransform: "none", fontWeight: "bold" }}
-          onClick={handlePost}
-          disabled={(!text && !image) || isLoading}
-        >
-          {isLoading ? <CircularProgress size={24} color="inherit" /> : "Post"}
-        </Button>
-      </Paper>
-    </Box>
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <Button
+                variant="outlined"
+                startIcon={<CloudUploadIcon />}
+                component="label"
+              >
+                Upload Image
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </Button>
+              {isLoading ? (
+                <Skeleton variant="rounded" width={100} height={100} />
+              ) : (
+                preview && (
+                  <Avatar
+                    variant="rounded"
+                    src={preview}
+                    sx={{
+                      width: 100,
+                      height: 100,
+                      borderRadius: 1,
+                      border: "2px solid #ccc",
+                    }}
+                  />
+                )
+              )}
+            </Stack>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              size="large"
+              sx={{ mt: 4, textTransform: "none", fontWeight: "bold" }}
+              onClick={handlePost}
+              disabled={(!text && !image) || isLoading}
+            >
+              {isLoading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Post"
+              )}
+            </Button>
+          </Paper>
+        </Box>
+      </div>
+    </Fade>
   );
 }

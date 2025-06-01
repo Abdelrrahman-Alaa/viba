@@ -14,6 +14,8 @@ import {
   IconButtonProps,
   styled,
   Collapse,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
@@ -34,6 +36,8 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import { createComment, deleteComment } from "@/app/_redux/commentSlice";
+import SendIcon from "@mui/icons-material/Send";
+import Skeleton from "@mui/material/Skeleton";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -67,6 +71,7 @@ export default function PostComponent({
   const [commentIdToDelete, setCommentIdToDelete] = useState<string | null>(
     null
   );
+  const [commentLoading, setCommentLoading] = useState(false);
 
   const [openCommentConfirm, setOpenCommentConfirm] = useState(false);
 
@@ -118,23 +123,20 @@ export default function PostComponent({
 
   const handleAddComment = async () => {
     if (!commentContent.trim()) return;
-
+    setCommentLoading(true);
     const result = await dispatch(
       createComment({
         content: commentContent,
         post: post._id,
       })
     );
-
+    setCommentLoading(false);
     if (createComment.fulfilled.match(result)) {
       const newComment = result.payload.comment;
       if (newComment) {
         post.comments.push(newComment);
       }
     }
-
-    console.log(token);
-
     setCommentContent("");
   };
 
@@ -162,7 +164,17 @@ export default function PostComponent({
   }, [post.createdAt]);
 
   return (
-    <Card sx={{ maxWidth: 600, margin: "auto", mb: 2 }} elevation={3}>
+    <Card
+      elevation={4}
+      sx={{
+        mb: 3,
+        maxWidth: 600,
+        mx: "auto",
+        width: "100%",
+        transition: "box-shadow 0.3s",
+        "&:hover": { boxShadow: 8 },
+      }}
+    >
       <CardHeader
         avatar={<Avatar alt="User avatar" src={post.user?.photo} />}
         title={post.user?.name}
@@ -278,7 +290,7 @@ export default function PostComponent({
           <ShareIcon color={"action"} />
         </IconButton>
       </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
+      <Collapse in={expanded} timeout={400} unmountOnExit>
         {post.comments.length > 0 && isSinglePost == false ? (
           <CardContent sx={{ my: 1, backgroundColor: "#eee" }}>
             {post.comments.slice(0, 3).map((comment, index) => (
@@ -413,23 +425,34 @@ export default function PostComponent({
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Avatar src={post.user?.photo} sx={{ width: 32, height: 32 }} />
           <Box sx={{ flexGrow: 1 }}>
-            <input
+            <TextField
               type="text"
               placeholder="Add a comment..."
               value={commentContent}
               onChange={(e) => setCommentContent(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                borderRadius: "20px",
-                border: "1px solid #ccc",
-                outline: "none",
+              size="small"
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleAddComment}
+                      disabled={!commentContent.trim() || commentLoading}
+                    >
+                      {commentLoading ? (
+                        <Skeleton variant="circular" width={24} height={24} />
+                      ) : (
+                        <SendIcon
+                          color={commentContent.trim() ? "primary" : "disabled"}
+                        />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+                sx: { borderRadius: 5, background: "#fff" },
               }}
             />
           </Box>
-          <Button onClick={handleAddComment} disabled={!commentContent.trim()}>
-            Send
-          </Button>
         </Box>
       </CardContent>
     </Card>

@@ -19,11 +19,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { State } from "../_redux/store";
 import { useRouter } from "next/navigation";
 import { removeToken } from "../_redux/authSlice";
+import { usePathname } from "next/navigation";
 
 function Navbar() {
   const token = useSelector((store: State) => store.authReducer.token);
   const router = useRouter();
   const dispatch = useDispatch();
+  const pathname = usePathname();
+
   function logout() {
     router.push("/login");
     dispatch(removeToken());
@@ -52,12 +55,24 @@ function Navbar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar
+      position="static"
+      elevation={2}
+      sx={{
+        boxShadow: 2,
+        background: "linear-gradient(90deg, #1976d2 0%, #9c27b0 100%)",
+      }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* Desktop Screen */}
-
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+          {/* Logo/Brand Avatar */}
+          <AdbIcon
+            sx={{
+              display: { xs: "none", md: "flex" },
+              mr: 1,
+              color: "white",
+            }}
+          />
           <Typography
             variant="h6"
             noWrap
@@ -67,11 +82,11 @@ function Navbar() {
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".1rem",
-              color: "inherit",
+              color: "white",
               textDecoration: "none",
             }}
           >
-            <Link href={"/"}>VIBA</Link>
+            <Link href="/">VIBA</Link>
           </Typography>
 
           {token && (
