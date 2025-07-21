@@ -101,22 +101,22 @@ export default function Login() {
             {/* Demo Credentials Box */}
             <Box
               sx={{
-                bgcolor: "#e3f2fd", // لون أزرق فاتح
+                bgcolor: "#e3f2fd", 
                 p: 2,
                 borderRadius: 2,
                 display: "flex",
                 alignItems: "start",
                 gap: 1,
-                border: "1px solid #90caf9", // إطار أزرق فاتح
+                border: "1px solid #90caf9",
                 boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
               }}
             >
-              <InfoIcon sx={{ color: "#1976d2" }} /> {/* أزرق غامق */}
+              <InfoIcon sx={{ color: "#1976d2" }} /> 
               <Box>
                 <Typography
                   variant="subtitle2"
                   sx={{
-                    color: "#1565c0", // أزرق غامق للعنوان
+                    color: "#1565c0", 
                     fontWeight: "bold",
                     mb: 0.5,
                   }}
@@ -126,10 +126,9 @@ export default function Login() {
                 <Typography
                   variant="body2"
                   sx={{
-                    color: "#0d47a1", // أزرق غامق جداً للنص
+                    color: "#0d47a1", 
                     fontWeight: 500,
                     "& span": {
-                      // تنسيق خاص للقيم
                       color: "#1976d2",
                       fontFamily: "monospace",
                       backgroundColor: "#fff",
