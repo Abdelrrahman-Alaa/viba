@@ -36,6 +36,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import { createComment, deleteComment } from "@/app/_redux/commentSlice";
+import { getPost, getPosts, getUserPosts } from "@/app/_redux/postSlice";
 import SendIcon from "@mui/icons-material/Send";
 import Skeleton from "@mui/material/Skeleton";
 
@@ -132,9 +133,10 @@ export default function PostComponent({
     );
     setCommentLoading(false);
     if (createComment.fulfilled.match(result)) {
-      const newComment = result.payload.comment;
-      if (newComment) {
-        post.comments.push(newComment);
+      if (isSinglePost) {
+        dispatch(getPost(post._id));
+      } else {
+        dispatch(getPosts());
       }
     }
     setCommentContent("");
@@ -145,10 +147,17 @@ export default function PostComponent({
     setOpenCommentConfirm(true);
   };
 
-  const handleConfirmCommentDelete = () => {
+  const handleConfirmCommentDelete = async () => {
     if (commentIdToDelete) {
-      dispatch(deleteComment(commentIdToDelete));
-      // post.comments = post.comments.filter((c) => c._id !== commentIdToDelete);
+      const result = await dispatch(deleteComment(commentIdToDelete));
+      console.log("Delete result:", result); // أضف هذا السطر
+      if (deleteComment.fulfilled.match(result)) {
+        if (isSinglePost) {
+          dispatch(getPost(post._id));
+        } else {
+          dispatch(getPosts());
+        }
+      }
     }
     setOpenCommentConfirm(false);
     setCommentIdToDelete(null);
@@ -293,7 +302,7 @@ export default function PostComponent({
       <Collapse in={expanded} timeout={400} unmountOnExit>
         {post.comments.length > 0 && isSinglePost == false ? (
           <CardContent sx={{ my: 1, backgroundColor: "#eee" }}>
-            {post.comments.slice(0, 3).map((comment, index) => (
+            {post.comments.slice(-3).map((comment, index) => (
               <Box key={index} sx={{ mb: 2 }}>
                 <CardHeader
                   avatar={

@@ -42,6 +42,8 @@ export const createComment = createAsyncThunk(
 export const deleteComment = createAsyncThunk(
   "comments/deleteComment",
   async (commentId: string) => {
+    console.log("Token before delete:", localStorage.getItem("token"));
+    console.log("Comment ID:", commentId);
     const response = await fetch(
       `https://linked-posts.routemisr.com/comments/${commentId}`,
       {

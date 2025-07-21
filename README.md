@@ -1,36 +1,121 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+---
 
-## Getting Started
+## 🧪 Demo Credentials
 
-First, run the development server:
+Use the following credentials to log in as a demo user:
+
+```
+Email:    demo@demo.com
+Password: Demo@123
+```
+
+---
+
+## 🧑‍💻 Getting Started
+
+### 1. Install dependencies
+
+```bash
+npm install
+# or
+yarn install
+```
+
+### 2. Run the development server
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📝 Scripts
 
-## Learn More
+- `dev` – Start the development server with Turbopack
+- `build` – Build the app for production
+- `start` – Start the production server
+- `lint` – Run ESLint
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Next.js 15** – App router, SSR, API routes
+- **React 19** – Modern React features
+- **Redux Toolkit** – State management
+- **Material UI** – UI components and theming
+- **Formik & Yup** – Forms and validation
+- **JWT** – Authentication
+- **TypeScript** – Type safety
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📦 Main Dependencies
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See [`package.json`](./package.json) for the full list.
+
+---
+
+## 🏗️ TypeScript Configuration
+
+- Strict mode enabled
+- Path aliases: `@/*` → `src/*`
+- No JS emit, only type-checking
+
+---
+
+## 🗃️ Data Models
+
+Defined in [`src/app/interfaces.ts`](./src/app/interfaces.ts):
+
+- **User**: `{ _id, name, photo }`
+- **Post**: `{ _id, body, image, user, createdAt, comments, id }`
+- **Comment**: `{ _id, content, commentCreator, post, createdAt }`
+
+---
+
+## 🧩 State Management
+
+Redux store is set up in [`src/app/_redux/store.ts`](./src/app/_redux/store.ts)  
+Slices: `authSlice`, `postSlice`, `commentSlice`
+
+---
+
+## 🧹 Linting & Formatting
+
+- ESLint config: [`eslint.config.mjs`](./eslint.config.mjs)
+- Ignores: `node_modules`, `.next`, build, coverage, etc. (see `.gitignore`)
+
+---
+
+## 📁 Other Notable Files
+
+- `.gitignore` – Standard Node/Next ignores
+- `next.config.ts` – Next.js configuration
+- `tsconfig.json` – TypeScript configuration
+
+---
+
+## 🌐 Deployment
+
+You can deploy this app on [Vercel](https://vercel.com/) or any platform supporting Next.js.
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+
+---
+
+## 📄 License
+
+This project is for educational/demo purposes.
+
+---
+
+**Enjoy building with Viba!**
