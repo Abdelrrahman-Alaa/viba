@@ -1,19 +1,61 @@
----
+# Viba
 
-## 🧪 Demo Credentials
+A modern social platform built with **Next.js 15**, **React 19**, **Redux Toolkit**, and **Material UI**.
+Viba allows users to register, log in, create posts, comment, and interact in real time with a beautiful, responsive UI.
 
-Use the following credentials to log in as a demo user:
+## Demo
+
+### :globe_with_meridians: Live Demo
+
+[Try Viba Now](https://viba.vercel.app/)
+
+### :key: Demo Credentials
 
 ```
 Email:    demo@demo.com
 Password: Demo@123
 ```
 
-[🌐 **Live Demo**](https://viba.vercel.app/)
+## Features
 
----
+- **Authentication**: Register, login, and secure your session with JWT
+- **Post Feed**: View all posts, each with user info, image, and comments
+- **Create Post**: Add new posts with text and optional image upload
+- **Comment System**: Add, delete, and view the latest comments on posts
+- **Profile Page**: See your posts and manage your content
+- **Protected Routes**: Only authenticated users can access main features
+- **Responsive Design**: Built with Material UI for a great look on all devices
+- **State Management**: Uses Redux Toolkit for scalable, maintainable state
 
-## 🧑‍💻 Getting Started
+## Project Structure
+
+```
+viba/
+│
+├── .next/                # Next.js build output
+├── node_modules/         # Project dependencies
+├── public/              # Static assets (SVGs, favicon, etc.)
+├── src/
+│   └── app/
+│       ├── _redux/      # Redux slices and store
+│       ├── components/  # Reusable React components
+│       ├── profile/     # User profile page
+│       ├── single-post/ # Single post view
+│       ├── create-post/ # Create post page
+│       ├── login/       # Login page
+│       ├── register/    # Registration page
+│       ├── _navbar/     # Navigation bar
+│       ├── interfaces.ts # TypeScript interfaces
+│       ├── globals.css  # Global styles
+│       └── ...          # Other app files
+├── package.json
+├── tsconfig.json
+├── next.config.ts
+├── eslint.config.mjs
+└── README.md
+```
+
+## Getting Started
 
 ### 1. Install dependencies
 
@@ -33,18 +75,14 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) to view the app.
 
----
-
-## 📝 Scripts
+## Scripts
 
 - `dev` – Start the development server with Turbopack
 - `build` – Build the app for production
 - `start` – Start the production server
 - `lint` – Run ESLint
 
----
-
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Next.js 15** – App router, SSR, API routes
 - **React 19** – Modern React features
@@ -54,70 +92,42 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 - **JWT** – Authentication
 - **TypeScript** – Type safety
 
----
-
-## 📦 Main Dependencies
+## Main Dependencies
 
 See [`package.json`](./package.json) for the full list.
 
----
-
-## 🏗️ TypeScript Configuration
+## TypeScript Configuration
 
 - Strict mode enabled
 - Path aliases: `@/*` → `src/*`
 - No JS emit, only type-checking
 
----
+## Data Models
 
-## 🗃️ Data Models
-
-Defined in [`src/app/interfaces.ts`](./src/app/interfaces.ts):
+Defined in `src/app/interfaces.ts`:
 
 - **User**: `{ _id, name, photo }`
 - **Post**: `{ _id, body, image, user, createdAt, comments, id }`
 - **Comment**: `{ _id, content, commentCreator, post, createdAt }`
 
----
+## State Management
 
-## 🧩 State Management
-
-Redux store is set up in [`src/app/_redux/store.ts`](./src/app/_redux/store.ts)  
+Redux store is set up in `src/app/_redux/store.ts`
 Slices: `authSlice`, `postSlice`, `commentSlice`
 
----
+## Linting & Formatting
 
-## 🧹 Linting & Formatting
+- ESLint config in `eslint.config.mjs`
+- Standard Next.js/Node ignores
 
-- ESLint config: [`eslint.config.mjs`](./eslint.config.mjs)
-- Ignores: `node_modules`, `.next`, build, coverage, etc. (see `.gitignore`)
-
----
-
-## 📁 Other Notable Files
-
-- `.gitignore` – Standard Node/Next ignores
-- `next.config.ts` – Next.js configuration
-- `tsconfig.json` – TypeScript configuration
-
----
-
-## 🌐 Deployment
+## Deployment
 
 You can deploy this app on [Vercel](https://vercel.com/) or any platform supporting Next.js.
 
----
-
-## 🤝 Contributing
+## Contributing
 
 Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
----
-
-## 📄 License
+## License
 
 This project is for educational/demo purposes.
-
----
-
-**Enjoy building with Viba!**
